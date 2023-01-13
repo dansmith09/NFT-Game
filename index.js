@@ -9,6 +9,7 @@ for (let i = 0; i < collisions.length; i+= 60) {
     collisionsMap.push(collisions.slice(i, i + 60))
 }
 
+// Boundary Class
 class Boundary {
     static width = 48
     static height = 48
@@ -19,7 +20,7 @@ class Boundary {
     }
 
     draw() {
-        c.fillStyle = 'rgba(225, 0, 0, 0.2'
+        c.fillStyle = 'rgba(225, 0, 0, 0.0'
         c.fillRect(
             this.position.x,
             this.position.y,
@@ -29,6 +30,7 @@ class Boundary {
     }
 }
 
+// Custom Boundary Class
 class CustomBoundary {
     constructor({position, dimensions}) {
         this.position = position
@@ -37,7 +39,7 @@ class CustomBoundary {
     }
 
     draw() {
-        c.fillStyle = 'rgba(225, 0, 0, 0.2'
+        c.fillStyle = 'rgba(225, 0, 0, 0.0'
         c.fillRect(
             this.position.x,
             this.position.y,
@@ -54,6 +56,7 @@ const offset = {
     y: -640
 }
 
+//Collision Mapping
 // This is the generic code for collision set up
 // collisionsMap.forEach((row, i) => {
 //     row.forEach((symbol, j) => {
@@ -67,6 +70,7 @@ const offset = {
 //         )}
 //     })
 // })
+
 
 // customised collision code
 collisionsMap.forEach((row, i) => {
@@ -97,7 +101,7 @@ collisionsMap.forEach((row, i) => {
             && j !== 38
             && j !== 21
             && j !== 26
-            && symbol === 401) {boundaries.push( // Move tree boundaries up
+            && symbol === 401) {boundaries.push( // Move tree boundaries up and customise width
             new CustomBoundary({
                 position: {
                     x: j * Boundary.width + offset.x + 8,
@@ -150,25 +154,39 @@ image.src = './img/Summer-Map.png'
 const foregroundImage = new Image()
 foregroundImage.src = './img/Summer-Foreground.png'
 
-const playerImage = new Image()
-playerImage.src = './img/playerDown.png'
+const playerDownImage = new Image()
+playerDownImage.src = './img/playerDown.png'
 
+const playerUpImage = new Image()
+playerUpImage.src = './img/playerUp.png'
+
+const playerLeftImage = new Image()
+playerLeftImage.src = './img/playerLeft.png'
+
+const playerRightImage = new Image()
+playerRightImage.src = './img/playerRight.png'
+
+// Sprite Class
 class Sprite {
-    constructor({ position, image, frames = { max: 1}}) {
+    constructor({ position, image, frames = { max: 1}, sprites}) {
         this.position = position
         this.image = image
-        this.frames = frames
+        this.frames = {...frames, val: 0, elapsed: 0}
 
         this.image.onload = () => {
             this.width = this.image.width / this.frames.max
             this.height = this.image.height
         }
+
+        this.moving = false
+        this.sprites = sprites
     }
 
     draw() {
         c.drawImage(
             this.image,
-            0,
+            // 0,
+            this.frames.val * this.width,
             0,
             this.image.width / this.frames.max,
             this.image.height,
@@ -177,6 +195,20 @@ class Sprite {
             this.image.width / this.frames.max,
             this.image.height,
         )
+
+        if(!this.moving) return
+
+        if (this.frames.max > 1) {
+            this.frames.elapsed++
+        }
+
+        if (this.frames.elapsed % 8 === 0) {
+            if(this.frames.val < this.frames.max - 1){
+                this.frames.val++
+            } else {
+                this.frames.val = 0
+            }
+        }
     }
 }
 
@@ -185,9 +217,15 @@ const player = new Sprite({
         x: canvas.width / 2 - 192 / 3 / 2,
         y: canvas.height / 2 - 48 / 2
     },
-    image: playerImage,
+    image: playerDownImage,
     frames: {
         max: 4
+    },
+    sprites: {
+        up: playerUpImage,
+        down: playerDownImage,
+        left: playerLeftImage,
+        right: playerRightImage,
     }
 })
 
@@ -244,8 +282,12 @@ function animate() {
     foreground.draw()
 
     let moving = true
+    player.moving = false
+
     // moving movables
     if(keys.w.pressed && lastKey === 'w') {
+        player.moving = true
+        player.image = player.sprites.up
         for (let i = 0; i < boundaries.length; i++) {
             const boundary = boundaries[i]
             // collision detection
@@ -268,6 +310,8 @@ function animate() {
     }
 
     else if(keys.a.pressed && lastKey === 'a') {
+        player.moving = true
+        player.image = player.sprites.left
         for (let i = 0; i < boundaries.length; i++) {
             const boundary = boundaries[i]
             // collision detection
@@ -290,6 +334,8 @@ function animate() {
     }
 
     else if(keys.d.pressed && lastKey === 'd') {
+        player.moving = true
+        player.image = player.sprites.right
         for (let i = 0; i < boundaries.length; i++) {
             const boundary = boundaries[i]
             // collision detection
@@ -312,6 +358,8 @@ function animate() {
     }
 
     else if(keys.s.pressed && lastKey === 's') {
+        player.moving = true
+        player.image = player.sprites.down
         for (let i = 0; i < boundaries.length; i++) {
             const boundary = boundaries[i]
             // collision detection
