@@ -20,7 +20,7 @@ class Boundary {
     }
 
     draw() {
-        c.fillStyle = 'rgba(225, 0, 0, 0.0'
+        c.fillStyle = 'rgba(225, 0, 0, 0.2'
         c.fillRect(
             this.position.x,
             this.position.y,
@@ -39,7 +39,7 @@ class CustomBoundary {
     }
 
     draw() {
-        c.fillStyle = 'rgba(225, 0, 0, 0.0'
+        c.fillStyle = 'rgba(225, 0, 0, 0.2'
         c.fillRect(
             this.position.x,
             this.position.y,
@@ -100,7 +100,6 @@ collisionsMap.forEach((row, i) => {
             i === 17)
             && j !== 38
             && j !== 21
-            && j !== 26
             && symbol === 401) {boundaries.push( // Move tree boundaries up and customise width
             new CustomBoundary({
                 position: {
