@@ -20,7 +20,7 @@ class Boundary {
     }
 
     draw() {
-        c.fillStyle = 'rgba(225, 0, 0, 0.2'
+        c.fillStyle = 'rgba(225, 0, 0, 0.0'
         c.fillRect(
             this.position.x,
             this.position.y,
@@ -39,7 +39,7 @@ class CustomBoundary {
     }
 
     draw() {
-        c.fillStyle = 'rgba(225, 0, 0, 0.2'
+        c.fillStyle = 'rgba(225, 0, 0, 0.0'
         c.fillRect(
             this.position.x,
             this.position.y,
