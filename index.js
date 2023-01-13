@@ -12,10 +12,28 @@ for (let i = 0; i < collisions.length; i+= 60) {
 class Boundary {
     static width = 48
     static height = 48
-    constructor({position}, width = 48, height = 48 ) {
+    constructor({position}) {
         this.position = position
         this.width = 48
         this.height = 48
+    }
+
+    draw() {
+        c.fillStyle = 'rgba(225, 0, 0, 0.2'
+        c.fillRect(
+            this.position.x,
+            this.position.y,
+            this.width,
+            this.height
+        )
+    }
+}
+
+class CustomBoundary {
+    constructor({position, dimensions}) {
+        this.position = position
+        this.width = dimensions.width
+        this.height = dimensions.height
     }
 
     draw() {
@@ -53,11 +71,19 @@ const offset = {
 // customised collision code
 collisionsMap.forEach((row, i) => {
     row.forEach((symbol, j) => {
-        if((i === 14 || 
-            i === 15 ||
-            i === 16 && j !== 23 ||
-            i === 17)
-            && symbol === 401) {boundaries.push(
+        if(i === 16 && j === 23 && symbol === 401) {boundaries.push( // Move barrel to right
+            new CustomBoundary({
+                position: {
+                    x: j * Boundary.width + offset.x + 10,
+                    y: i * Boundary.height + offset.y + 2,
+                },
+                dimensions: {
+                    width: 50,
+                    height: 30
+                }
+            })
+        )}
+        else if(i === 14 && symbol === 401) {boundaries.push( // Move top ocean boundaries up
             new Boundary({
                 position: {
                     x: j * Boundary.width + offset.x,
@@ -65,7 +91,25 @@ collisionsMap.forEach((row, i) => {
                 }
             })
         )}
-        else if(i === 21 && symbol === 401) {boundaries.push(
+        else if((i === 15 ||
+            i === 16 ||
+            i === 17)
+            && j !== 38
+            && j !== 21
+            && j !== 26
+            && symbol === 401) {boundaries.push( // Move tree boundaries up
+            new CustomBoundary({
+                position: {
+                    x: j * Boundary.width + offset.x + 8,
+                    y: i * Boundary.height + offset.y - 22,
+                },
+                dimensions: {
+                    width: 30,
+                    height: 48
+                }
+            })
+        )}
+        else if(i === 21 && symbol === 401) {boundaries.push( // Move near water down
             new Boundary({
                 position: {
                     x: j * Boundary.width + offset.x,
@@ -73,7 +117,7 @@ collisionsMap.forEach((row, i) => {
                 }
             })
         )}
-        else if(i === 22 && symbol === 401) {boundaries.push(
+        else if(i === 22 && symbol === 401) {boundaries.push( // Move near water up
             new Boundary({
                 position: {
                     x: j * Boundary.width + offset.x,
@@ -81,7 +125,7 @@ collisionsMap.forEach((row, i) => {
                 }
             })
         )}
-        else if(i === 25 && symbol === 401) {boundaries.push(
+        else if(i === 25 && symbol === 401) {boundaries.push( // Move near ocean up
             new Boundary({
                 position: {
                     x: j * Boundary.width + offset.x,
@@ -138,12 +182,12 @@ class Sprite {
 
 const player = new Sprite({
     position: {
-        x: canvas.width / 2 - 144 / 3 / 2,
+        x: canvas.width / 2 - 192 / 3 / 2,
         y: canvas.height / 2 - 48 / 2
     },
     image: playerImage,
     frames: {
-        max: 3
+        max: 4
     }
 })
 
